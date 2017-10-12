@@ -105,4 +105,76 @@ class AlbumTest extends TestCase {
             ],
         ]);
     }
+
+
+    /** @test */
+    function the_number_of_albums_per_genre_is_returned_correctly()
+    {
+        // ARRANGE
+        // 5 albums
+        $albumA = factory(Album::class)->create();
+        $albumB = factory(Album::class)->create();
+        $albumC = factory(Album::class)->create();
+        $albumD = factory(Album::class)->create();
+        $albumE = factory(Album::class)->create();
+
+        // Associate each with a genre
+        $albumA->genres()->attach(1);
+        $albumB->genres()->attach(1);
+        $albumC->genres()->attach(2);
+        $albumD->genres()->attach(2);
+        $albumE->genres()->attach(3);
+
+        // Interim DB check
+        $this->assertDatabaseHas('album_genre', [
+            'album_id' => $albumE->id,
+            'genre_id' => 3
+        ]);
+
+        // ACT
+        // Get the genres in descending order
+        $responseDesc = $this->json("GET", '/genres/desc');
+
+        // ASSERT
+        // Data returned in correct order
+        $responseDesc->assertJson([
+            [
+                "id"           => 1,
+                "name"         => "Pop",
+                "total_albums" => 2,
+            ],
+            [
+                "id"           => 2,
+                "name"         => "Rock",
+                "total_albums" => 2,
+            ],
+            [
+                "id"           => 3,
+                "name"         => "Country",
+                "total_albums" => 1,
+            ],
+        ]);
+
+        // ACT
+        // Get genres in ascending order
+        $responseAsc = $this->json("GET", '/genres/asc');
+
+        $responseAsc->assertJson([
+            [
+                "id"           => 3,
+                "name"         => "Country",
+                "total_albums" => 1,
+            ],
+            [
+                "id"           => 1,
+                "name"         => "Pop",
+                "total_albums" => 2,
+            ],
+            [
+                "id"           => 2,
+                "name"         => "Rock",
+                "total_albums" => 2,
+            ],
+        ]);
+    }
 }
