@@ -15,7 +15,9 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example', require('./components/Example.vue'));
+Vue.component('album-genre', require('./components/album-genre.vue'));
+Vue.component('album-year', require('./components/album-year.vue'));
+Vue.component('favourite-albums', require('./components/favourite-albums.vue'));
 
 const app = new Vue({
     el: '#app'

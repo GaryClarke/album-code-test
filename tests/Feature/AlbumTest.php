@@ -30,27 +30,27 @@ class AlbumTest extends TestCase {
         $albumE = factory(Album::class)->create();
 
         // 5 albums purchased
-        $purchase1 = $mother->albums()->attach($albumA, [
+        $purchase1 = $mother->albums()->attach($albumA->id, [
             'amount'       => 1000,
             'purchased_at' => '2016-01-01 20:00:00'
         ]);
 
-        $purchase2 = $father->albums()->attach($albumB, [
+        $purchase2 = $father->albums()->attach($albumB->id, [
             'amount'       => 1000,
             'purchased_at' => '2016-01-01 20:00:00'
         ]);
 
-        $purchase3 = $sister->albums()->attach($albumC, [
+        $purchase3 = $sister->albums()->attach($albumC->id, [
             'amount'       => 1000,
             'purchased_at' => '2015-01-01 20:00:00'
         ]);
 
-        $purchase4 = $brother->albums()->attach($albumD, [
+        $purchase4 = $brother->albums()->attach($albumD->id, [
             'amount'       => 1500,
             'purchased_at' => '2015-01-01 20:00:00'
         ]);
 
-        $purchase5 = $self->albums()->attach($albumE, [
+        $purchase5 = $self->albums()->attach($albumE->id, [
             'amount'       => 1500,
             'purchased_at' => '2014-01-01 20:00:00'
         ]);
@@ -201,27 +201,27 @@ class AlbumTest extends TestCase {
         $albumE->genres()->attach(2);
 
         // 5 albums purchased
-        $purchase1 = $mother->albums()->attach($albumA, [
+        $purchase1 = $mother->albums()->attach($albumA->id, [
             'amount'       => 1500,
             'purchased_at' => '2016-01-01 20:00:00'
         ]);
 
-        $purchase2 = $father->albums()->attach($albumB, [
+        $purchase2 = $father->albums()->attach($albumB->id, [
             'amount'       => 1500,
             'purchased_at' => '2016-01-01 20:00:00'
         ]);
 
-        $purchase3 = $mother->albums()->attach($albumC, [
+        $purchase3 = $mother->albums()->attach($albumC->id, [
             'amount'       => 1000,
             'purchased_at' => '2015-01-01 20:00:00'
         ]);
 
-        $purchase4 = $father->albums()->attach($albumD, [
+        $purchase4 = $father->albums()->attach($albumD->id, [
             'amount'       => 1000,
             'purchased_at' => '2015-01-01 20:00:00'
         ]);
 
-        $purchase5 = $mother->albums()->attach($albumE, [
+        $purchase5 = $mother->albums()->attach($albumE->id, [
             'amount'       => 1000,
             'purchased_at' => '2014-01-01 20:00:00'
         ]);
@@ -234,13 +234,12 @@ class AlbumTest extends TestCase {
         // ASSERT
         // The correct data is returned
         $response->assertJson([
-            "relationship" => "mother",
-            "total_spend"  => 0,
-            "fave"         => [
+            "total_spend" => 3500,
+            "fave"        => [
                 "name"       => "Pop",
                 "popularity" => 2,
             ],
-            "least_fave"   => [
+            "least_fave"  => [
                 "name"       => "Rock",
                 "popularity" => 1,
             ]

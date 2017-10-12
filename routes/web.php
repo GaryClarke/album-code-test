@@ -57,12 +57,11 @@ Route::get('people/{person}/albums', function (Person $person)
 {
     if (request()->json())
     {
-
         $albums = $person->albums;
 
         $totalSpend = $albums->sum('pivot.amount');
 
-        $albumIds = $albums->pluck('id');
+        $albumIds = $albums->pluck('id')->toArray();
 
         $genres = DB::table('album_genre')
             ->whereIn('album_id', $albumIds)
