@@ -177,4 +177,73 @@ class AlbumTest extends TestCase {
             ],
         ]);
     }
+
+    /** @test */
+    function individual_person_album_data_is_returned_correctly()
+    {
+        // ARRANGE
+        // 2 people
+        $mother = Person::whereRelationship('mother')->first();
+        $father = Person::whereRelationship('father')->first();
+
+        // 5 albums
+        $albumA = factory(Album::class)->create();
+        $albumB = factory(Album::class)->create();
+        $albumC = factory(Album::class)->create();
+        $albumD = factory(Album::class)->create();
+        $albumE = factory(Album::class)->create();
+
+        // Associate each with a genre
+        $albumA->genres()->attach(1);
+        $albumB->genres()->attach(1);
+        $albumC->genres()->attach(1);
+        $albumD->genres()->attach(2);
+        $albumE->genres()->attach(2);
+
+        // 5 albums purchased
+        $purchase1 = $mother->albums()->attach($albumA, [
+            'amount'       => 1500,
+            'purchased_at' => '2016-01-01 20:00:00'
+        ]);
+
+        $purchase2 = $father->albums()->attach($albumB, [
+            'amount'       => 1500,
+            'purchased_at' => '2016-01-01 20:00:00'
+        ]);
+
+        $purchase3 = $mother->albums()->attach($albumC, [
+            'amount'       => 1000,
+            'purchased_at' => '2015-01-01 20:00:00'
+        ]);
+
+        $purchase4 = $father->albums()->attach($albumD, [
+            'amount'       => 1000,
+            'purchased_at' => '2015-01-01 20:00:00'
+        ]);
+
+        $purchase5 = $mother->albums()->attach($albumE, [
+            'amount'       => 1000,
+            'purchased_at' => '2014-01-01 20:00:00'
+        ]);
+
+
+        // ACT
+        // Get an individual persons album purchase data
+        $response = $this->json("GET", "/people/{$mother->id}/albums");
+
+        // ASSERT
+        // The correct data is returned
+        $response->assertJson([
+            "relationship" => "mother",
+            "total_spend"  => 0,
+            "fave"         => [
+                "name"       => "Pop",
+                "popularity" => 2,
+            ],
+            "least_fave"   => [
+                "name"       => "Rock",
+                "popularity" => 1,
+            ]
+        ]);
+    }
 }

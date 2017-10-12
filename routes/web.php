@@ -1,5 +1,7 @@
 <?php
 
+use App\Person;
+
 Route::get('/', function ()
 {
     return view('welcome');
@@ -45,4 +47,39 @@ Route::get('genres/{order}', function ($order)
     }
 
     abort('Sorry not sorry');
+});
+
+
+/**
+ * Filter the albums by family members, showing their favourite and least favourite genres and their spending.
+ */
+Route::get('people/{person}/albums', function (Person $person)
+{
+    if (request()->json())
+    {
+
+        $albums = $person->albums;
+
+        $totalSpend = $albums->sum('pivot.amount');
+
+        $albumIds = $albums->pluck('id');
+
+        $genres = DB::table('album_genre')
+            ->whereIn('album_id', $albumIds)
+            ->join('genres', 'album_genre.genre_id', 'genres.id')
+            ->select('genres.name', DB::raw("count(genres.id) as popularity"))
+            ->groupBy('genres.id')
+            ->orderBy('popularity', 'desc')
+            ->get();
+
+        return response()->json([
+            'relationship' => $person->relationship,
+            'total_spend'  => $totalSpend,
+            'fave'         => $genres->first(),
+            'least_fave'   => $genres->last()
+        ], 200);
+    }
+
+    abort('Sorry not sorry');
+
 });
