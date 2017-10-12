@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Person extends Model
 {
+    protected $table = 'people';
+
+    protected $fillable = ['relationship'];
+
+    public $timestamps = false;
 
     /**
      * A user can own different albums
