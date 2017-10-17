@@ -71,16 +71,19 @@ class AlbumTest extends TestCase {
         // Correct data returned in order
         $responseYear->assertJson([
             [
-                'year'  => 2014,
-                'spend' => 1500
+                'year'        => 2014,
+                'album_count' => 1,
+                'spend'       => 1500
             ],
             [
-                'year'  => 2015,
-                'spend' => 2500
+                'year'        => 2015,
+                'album_count' => 2,
+                'spend'       => 2500
             ],
             [
-                'year'  => 2016,
-                'spend' => 2000
+                'year'        => 2016,
+                'album_count' => 2,
+                'spend'       => 2000
             ]
         ]);
 
@@ -92,16 +95,19 @@ class AlbumTest extends TestCase {
         // Correct data returned in order
         $responseSpend->assertJson([
             [
-                'year'  => 2014,
-                'spend' => 1500
+                'year'        => 2014,
+                'album_count' => 1,
+                'spend'       => 1500
             ],
             [
-                'year'  => 2016,
-                'spend' => 2000
+                'year'        => 2016,
+                'album_count' => 2,
+                'spend'       => 2000
             ],
             [
-                'year'  => 2015,
-                'spend' => 2500
+                'year'        => 2015,
+                'album_count' => 2,
+                'spend'       => 2500
             ],
         ]);
     }
@@ -135,6 +141,7 @@ class AlbumTest extends TestCase {
         // Get the genres in descending order
         $responseDesc = $this->json("GET", '/genres/desc');
 
+
         // ASSERT
         // Data returned in correct order
         $responseDesc->assertJson([
@@ -144,7 +151,7 @@ class AlbumTest extends TestCase {
                 "total_albums" => 2,
             ],
             [
-                "id"           => 2,
+//                "id"           => 2,
                 "name"         => "Rock",
                 "total_albums" => 2,
             ],
@@ -226,7 +233,6 @@ class AlbumTest extends TestCase {
             'purchased_at' => '2014-01-01 20:00:00'
         ]);
 
-
         // ACT
         // Get an individual persons album purchase data
         $response = $this->json("GET", "/people/{$mother->id}/albums");
@@ -234,12 +240,13 @@ class AlbumTest extends TestCase {
         // ASSERT
         // The correct data is returned
         $response->assertJson([
-            "total_spend" => 3500,
-            "fave"        => [
+            "relationship" => "mother",
+            "total_spend"  => 3500,
+            "fave"         => [
                 "name"       => "Pop",
                 "popularity" => 2,
             ],
-            "least_fave"  => [
+            "least_fave"   => [
                 "name"       => "Rock",
                 "popularity" => 1,
             ]

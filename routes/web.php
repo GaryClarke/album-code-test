@@ -7,16 +7,18 @@ Route::get('/', function ()
     return view('welcome');
 });
 
-/**
- * Total number of albums purchased in each year and money spent on them. Should be orderable by year and amount.
- */
+
+#Total number of albums purchased in each year and money spent on them. Should be orderable by year and amount.
+//SELECT YEAR(purchased_at) as year, COUNT(*) as album_count, SUM(amount) as spend
+//FROM album_person
+//GROUP BY year
+//ORDER BY spend (year)
 Route::get('albums/{order}', function ($order)
 {
-
     if (request()->json())
     {
         $albumsByYearSpend = DB::table('album_person')
-            ->select(DB::raw("YEAR(purchased_at) as year"), DB::raw("SUM(amount) as spend"))
+            ->select(DB::raw("YEAR(purchased_at) as year"), DB::raw("COUNT(*) as album_count"), DB::raw("SUM(amount) as spend"))
             ->groupBy('year')
             ->orderBy($order)
             ->get();
@@ -24,14 +26,16 @@ Route::get('albums/{order}', function ($order)
         return response()->json($albumsByYearSpend, 200);
     }
 
-    abort('Sorry not sorry');
-
+    abort(403, 'Sorry not sorry');
 });
 
 
-/**
- * Number of albums in each genres. Should be orderable descending or ascending.
- */
+# Number of albums in each genres. Should be orderable descending or ascending.
+//SELECT g.name, COUNT(a.genre_id) as total_albums
+//FROM genres g
+//JOIN album_genre a ON (g.id = a.genre_id)
+//GROUP BY g.id
+//ORDER BY total_albums DESC (ASC)
 Route::get('genres/{order}', function ($order)
 {
     if (request()->json())
@@ -46,13 +50,11 @@ Route::get('genres/{order}', function ($order)
         return response()->json($albumsByGenre, 200);
     }
 
-    abort('Sorry not sorry');
+    abort(403, 'Sorry not sorry');
 });
 
 
-/**
- * Filter the albums by family members, showing their favourite and least favourite genres and their spending.
- */
+#Filter the albums by family members, showing their favourite and least favourite genres and their spending.
 Route::get('people/{person}/albums', function (Person $person)
 {
     if (request()->json())
@@ -79,6 +81,5 @@ Route::get('people/{person}/albums', function (Person $person)
         ], 200);
     }
 
-    abort('Sorry not sorry');
-
+    abort(403, 'Sorry not sorry');
 });
